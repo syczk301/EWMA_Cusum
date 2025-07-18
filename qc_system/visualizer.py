@@ -96,7 +96,8 @@ class Visualizer:
         fig.update_layout(
             title=title,
             showlegend=False,
-            height=600
+            height=700,  # 增加高度
+            width=1400  # 增加宽度
         )
         
         return fig
@@ -205,7 +206,8 @@ class Visualizer:
         
         fig.update_layout(
             title=title,
-            height=800,
+            height=900,  # 增加高度
+            width=1400,  # 增加宽度
             showlegend=True
         )
         
@@ -393,7 +395,8 @@ class Visualizer:
         
         fig.update_layout(
             title=title,
-            height=600
+            height=700,  # 增加高度
+            width=1400  # 增加宽度
         )
         
         return fig
@@ -484,7 +487,8 @@ class Visualizer:
         
         fig.update_layout(
             title=title,
-            height=600
+            height=700,  # 增加高度
+            width=1400  # 增加宽度
         )
         
         return fig
@@ -644,7 +648,8 @@ class Visualizer:
         
         fig.update_layout(
             title="质量控制综合仪表板",
-            height=900,
+            height=1000,  # 增加高度
+            width=1600,  # 增加宽度
             showlegend=True
         )
         
