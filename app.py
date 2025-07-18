@@ -41,15 +41,67 @@ st.sidebar.header("系统配置")
 # 数据输入方式
 data_input_method = st.sidebar.selectbox(
     "数据输入方式",
-    ["上传Excel文件", "使用示例数据", "手动输入数据"]
+    ["自动导入paper.xlsx", "上传Excel文件", "使用示例数据", "手动输入数据"],
+    index=0  # 默认选择第一个选项（自动导入paper.xlsx）
 )
+
+# 检查paper.xlsx文件是否存在（静默检查，不显示在侧边栏）
+import os
+paper_file_exists = os.path.exists("paper.xlsx")
 
 # 初始化数据处理器
 data_processor = DataProcessor()
 data = None
 
 # 数据加载部分
-if data_input_method == "上传Excel文件":
+if data_input_method == "自动导入paper.xlsx":
+    st.header("📁 自动导入paper.xlsx")
+    
+    try:
+        # 自动读取paper.xlsx文件
+        df = pd.read_excel("paper.xlsx")
+        st.success(f"✅ 成功自动加载paper.xlsx！数据形状: {df.shape}")
+        
+        # 显示数据预览
+        st.subheader("数据预览")
+        st.dataframe(df.head())
+        
+        # 显示所有列名
+        st.subheader("可用列")
+        st.write(f"所有列: {list(df.columns)}")
+        
+        # 选择数值列
+        numeric_columns = df.select_dtypes(include=[np.number]).columns.tolist()
+        if numeric_columns:
+            selected_column = st.selectbox("选择要分析的数值列", numeric_columns)
+            data = df[selected_column].dropna().values
+            st.info(f"选择了列: {selected_column}, 有效数据点: {len(data)}")
+            
+            # 显示选中列的基本统计信息
+            if len(data) > 0:
+                col1, col2, col3, col4 = st.columns(4)
+                with col1:
+                    st.metric("均值", f"{np.mean(data):.2f}")
+                with col2:
+                    st.metric("标准差", f"{np.std(data):.2f}")
+                with col3:
+                    st.metric("最小值", f"{np.min(data):.2f}")
+                with col4:
+                    st.metric("最大值", f"{np.max(data):.2f}")
+                
+
+        else:
+            st.error("❌ 未找到数值列，请检查paper.xlsx文件格式")
+            st.write("文件内容预览:")
+            st.dataframe(df.head(10))
+            
+    except FileNotFoundError:
+        st.error("❌ 未找到paper.xlsx文件，请确保文件存在于项目根目录")
+    except Exception as e:
+        st.error(f"❌ 文件读取错误: {str(e)}")
+        st.write("请检查文件格式是否正确")
+
+elif data_input_method == "上传Excel文件":
     st.header("📁 数据上传")
     
     uploaded_file = st.file_uploader(
@@ -74,6 +126,8 @@ if data_input_method == "上传Excel文件":
                 selected_column = st.selectbox("选择要分析的数值列", numeric_columns)
                 data = df[selected_column].dropna().values
                 st.info(f"选择了列: {selected_column}, 有效数据点: {len(data)}")
+                
+                
             else:
                 st.error("未找到数值列，请检查数据格式")
                 
@@ -108,6 +162,8 @@ elif data_input_method == "使用示例数据":
             st.metric("最小值", f"{np.min(data):.2f}")
         with col4:
             st.metric("最大值", f"{np.max(data):.2f}")
+        
+
 
 elif data_input_method == "手动输入数据":
     st.header("✏️ 手动输入数据")
@@ -129,6 +185,8 @@ elif data_input_method == "手动输入数据":
             
             data = np.array(data_list)
             st.success(f"成功解析 {len(data)} 个数据点")
+            
+
             
         except Exception as e:
             st.error(f"数据解析错误: {str(e)}")
@@ -158,11 +216,11 @@ if data is not None:
     col1, col2, col3 = st.columns(3)
     
     with col1:
-        usl = st.number_input("上规格限 (USL)", value=None, step=0.1,
-                             help="上规格限，可选")
+        usl = st.number_input("上规格限 (USL)", value=0.0, step=0.1,
+                             help="上规格限，可选（设为0表示不使用）")
     with col2:
-        lsl = st.number_input("下规格限 (LSL)", value=None, step=0.1,
-                             help="下规格限，可选")
+        lsl = st.number_input("下规格限 (LSL)", value=0.0, step=0.1,
+                             help="下规格限，可选（设为0表示不使用）")
     with col3:
         target = st.number_input("目标值", value=float(np.mean(data)), step=0.1,
                                 help="过程目标值")
@@ -191,8 +249,12 @@ if data is not None:
             cusum_result = cusum_chart.fit(data, target)
             cusum_stats = cusum_chart.get_statistics()
             
+            # 处理规格限（如果为0则视为未设置）
+            usl_final = usl if usl != 0.0 else None
+            lsl_final = lsl if lsl != 0.0 else None
+            
             # 执行统计分析
-            capability_result = statistics.process_capability_analysis(data, usl, lsl, target)
+            capability_result = statistics.process_capability_analysis(data, usl_final, lsl_final, target)
             trend_result = statistics.trend_analysis(data)
             normality_result = statistics.normality_test(data)
             
@@ -376,8 +438,8 @@ if data is not None:
                         'ewma_k': ewma_k,
                         'cusum_k': cusum_k,
                         'cusum_h': cusum_h,
-                        'usl': usl,
-                        'lsl': lsl,
+                        'usl': usl_final,
+                        'lsl': lsl_final,
                         'target': target
                     },
                     'ewma_result': ewma_result,
