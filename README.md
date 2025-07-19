@@ -392,3 +392,5 @@ viz.plot_control_charts_comparison(ewma_results, cusum_results)
 ---
 
 **注意**: 本系统适用于工业过程质量控制，请根据实际应用场景调整参数配置。 
+
+streamlit run app.py 
