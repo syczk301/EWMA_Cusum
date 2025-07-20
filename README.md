@@ -193,12 +193,19 @@ git clone https://github.com/your-username/EWMA_Xhate.git
 cd EWMA_Xhate
 ```
 
-2. **安装依赖**
+2. **创建并激活虚拟环境 (推荐)**
 ```bash
-pip install -r requirements.txt
+uv venv
+source .venv/bin/activate  # macOS/Linux
+.venv\Scripts\activate   # Windows
 ```
 
-3. **启动应用**
+3. **安装依赖**
+```bash
+uv pip install -r requirements.txt
+```
+
+4. **启动应用**
 ```bash
 streamlit run app.py
 ```
@@ -393,4 +400,3 @@ viz.plot_control_charts_comparison(ewma_results, cusum_results)
 
 **注意**: 本系统适用于工业过程质量控制，请根据实际应用场景调整参数配置。 
 
-streamlit run app.py 
