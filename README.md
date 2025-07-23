@@ -388,9 +388,9 @@ viz.plot_control_charts_comparison(ewma_results, cusum_results)
 
 ## �� 联系方式
 
-- **项目维护者**: clliford
+- **项目维护者**: clifford
 - **邮箱**: [your.email@example.com]
-- **GitHub**: [https://github.com/your-username]
+- **GitHub**: [https://github.com/syczk301/EWMA_Cusum]
 
 ## 🙏 致谢
 
