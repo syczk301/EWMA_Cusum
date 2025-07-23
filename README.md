@@ -205,11 +205,7 @@ export_report(export_data)
 1. **安装 uv**
 
 ```bash
-# Windows (PowerShell)
-irm https://astral.sh/uv/install.ps1 | iex
-
-# macOS/Linux
-curl -LsSf https://astral.sh/uv/install.sh | sh
+pip install uv
 ```
 
 2. **克隆项目**
@@ -222,6 +218,7 @@ cd EWMA_Cusum
 3. **创建虚拟环境并安装依赖**
 
 ```bash
+
 uv venv
 uv pip install -r requirements.txt
 ```
@@ -271,16 +268,7 @@ pip install -r requirements.txt
 streamlit run app.py
 ```
 
-### 🚀 使用 uv 快速开始
 
-如果你使用 uv，可以通过以下一键命令快速开始：
-
-```bash
-# 克隆项目并进入目录
-git clone https://github.com/syczk301/EWMA_Cusum && cd EWMA_Cusum
-
-# 创建环境、安装依赖、启动应用
-uv venv && uv pip install -r requirements.txt && streamlit run app.py
 ```
 
 ### 使用示例
